@@ -1,54 +1,78 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.annotation.NonNull; // <-- IMPORT THIS
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.widget.TextView;
-
-import com.example.myapplication.databinding.ActivityMainBinding;
-
-// Add these imports at the top
-import org.opencv.android.OpenCVLoader;
-import android.util.Log;
-
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Add this code INSIDE your MainActivity class
-    private static final String TAG = "MainActivity";
+    private GLSurfaceView mGLSurfaceView;
+    private CameraGLRenderer mRenderer;
 
-    // This static block will run and load OpenCV
-    static {
-        if (!OpenCVLoader.initDebug()) {
-            Log.d(TAG, "OpenCV not loaded");
-        } else {
-            Log.d(TAG, "OpenCV loaded");
-        }
-    }
-    // END of OpenCV block
-
-    // This is your original static block to load your C++ library
-    static {
-        System.loadLibrary("myapplication");
-    }
-
-    private ActivityMainBinding binding;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_main);
+        mGLSurfaceView = findViewById(R.id.gl_surface_view);
 
-        // Example of a call to a native method
-        TextView tv = binding.sampleText;
-        tv.setText(stringFromJNI());
+        // Check for camera permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    CAMERA_PERMISSION_REQUEST_CODE);
+        } else {
+            startRenderer();
+        }
     }
 
-    /**
-     * A native method that is implemented by the 'myapplication' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
+    private void startRenderer() {
+        mGLSurfaceView.setEGLContextClientVersion(2);
+
+        mRenderer = new CameraGLRenderer(this, mGLSurfaceView);
+        mGLSurfaceView.setRenderer(mRenderer);
+
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { // <-- ADDED @NonNull
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startRenderer();
+            } else {
+                Toast.makeText(this, "Camera permission is required to run this app", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mRenderer != null) {
+            mRenderer.onPause();
+            mGLSurfaceView.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mRenderer != null) {
+            mGLSurfaceView.onResume();
+            mRenderer.onResume();
+        }
+    }
 }
