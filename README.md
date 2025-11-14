@@ -6,6 +6,9 @@ It also includes a small TypeScript web page as required.
 
 App Demo
 A live, grayscale feed rendered with OpenGL.
+![color](https://github.com/user-attachments/assets/612fd454-1bce-4e2b-bc83-a4bfc59a0359)
+
+![gray](https://github.com/user-attachments/assets/45ba2a7b-35c2-460c-8e9c-9f141a7cc08a)
 
 
 1. Features Implemented
@@ -25,8 +28,6 @@ Web Viewer
 A simple index.html page styled with TailwindCSS.
 
 A main.ts (TypeScript) file that updates text (like "FPS" and "Resolution") on the page when it loads.
-
-The compiled main.js is included to make sure the page works.
 
 Version Control
 
