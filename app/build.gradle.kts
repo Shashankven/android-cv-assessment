@@ -4,9 +4,8 @@ plugins {
 
 android {
     namespace = "com.example.myapplication"
-    compileSdk {
-        version = release(36)
-    }
+    // I fixed this line for you as well
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.myapplication"
@@ -16,6 +15,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // THIS IS THE CORRECT LOCATION FOR THE ARGUMENTS
+        externalNativeBuild {
+            cmake {
+
+                arguments.add("-DOpenCV_DIR=" + properties["opencvsdk"] + "/sdk/native/jni")
+            }
+        }
     }
 
     buildTypes {
@@ -28,11 +35,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     externalNativeBuild {
         cmake {
+            // The 'arguments' line is GONE from here
             path = file("src/main/cpp/CMakeLists.txt")
             version = "3.22.1"
         }
@@ -43,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation("org.opencv:opencv:4.9.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

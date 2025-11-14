@@ -7,9 +7,27 @@ import android.widget.TextView;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 
+// Add these imports at the top
+import org.opencv.android.OpenCVLoader;
+import android.util.Log;
+
+
 public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'myapplication' library on application startup.
+    // Add this code INSIDE your MainActivity class
+    private static final String TAG = "MainActivity";
+
+    // This static block will run and load OpenCV
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "OpenCV not loaded");
+        } else {
+            Log.d(TAG, "OpenCV loaded");
+        }
+    }
+    // END of OpenCV block
+
+    // This is your original static block to load your C++ library
     static {
         System.loadLibrary("myapplication");
     }
