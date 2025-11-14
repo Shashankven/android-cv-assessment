@@ -6,8 +6,10 @@ It also includes a small TypeScript web page as required.
 
 App Demo
 A live, grayscale feed rendered with OpenGL.
-![color](https://github.com/user-attachments/assets/612fd454-1bce-4e2b-bc83-a4bfc59a0359)
 
+Original Image
+![color](https://github.com/user-attachments/assets/612fd454-1bce-4e2b-bc83-a4bfc59a0359)
+Android App
 ![gray](https://github.com/user-attachments/assets/45ba2a7b-35c2-460c-8e9c-9f141a7cc08a)
 
 
